@@ -1,0 +1,149 @@
+#!/bin/bash
+
+# Just exit on any error
+set -e
+
+if [[ -z "$1" && -z "$2" ]]; then
+  echo -e "[\033[32mHelp\033[0m] How to use mkcarpet:"
+  echo
+  echo "Usage: mkcarpet carpetzip outputdir"
+  echo ""
+  echo "carpetzip: This is the path/URL to a valid Carpet .zip file"
+  echo "outputdir: This is the directory that you wish to output the finished server jar file"
+else
+  if [[ -z "$1" || -z "$2" ]]; then
+    echo -e "[\033[31mUsage error\033[0m] mkcarpet carpetzip outputdir"
+    exit 0
+  fi
+fi
+
+# MKCARPETDIR
+mkcdir="$HOME/.mkcarpet"
+
+# URL to a valid download of Minecraft Server 1.12
+serverurl="https://s3.amazonaws.com/Minecraft.Download/versions/1.12/minecraft_server.1.12.jar"
+
+# Just the filename
+filename=$(basename "$1")
+# Work out the extension
+extension="${filename##*.}"
+# Work out the 'version' e.g. Carpet_vXX_XX_XX.zip will give a 'version' of Carpet_vXX_XX_XX
+# This is used later for the output file. Carpet_vXX_XX_XX.zip result in a final product of: Carpet_vXX_XX_XX.jar
+version="${filename%.*}"
+
+# Work out whether this is a zip file (ideal scenario) or a rar (might not be supported on some systems so do a check)
+if [ "$extension" ==  "zip" ]; then
+  mode=zip
+
+  # Stop halting on error
+  set +e
+
+  # Check for an unzip programme
+  if [ "$(which unzip)" == "" ]; then
+    echo -e "[\033[31mPath error\033[0m] Could not find unzip binary"
+    exit 1
+  fi
+
+  # Resume halting on error
+  set -e
+elif [ "$extension" == "rar" ]; then
+  # rar
+  mode=rar
+
+  # Stop halting on error
+  set +e
+
+  # Check for an unzip programme
+  if [ "$(which unrar)" == "" ]; then
+    echo -e "[\033[31mPath error\033[0m] Could not find unrar binary"
+    exit 1
+  fi
+
+  # Resume halting on error
+  set -e
+else 
+  # blah
+  echo -e "[\033[31mPath error\033[0m] Could not determine file type from path/URL"
+  exit 1
+fi
+
+# Assume the server zip is in the base dir
+serverzip="$mkcdir"/"minecraft_server.1.12.zip"
+
+# Output directory
+outputdir=$(readlink -f "$2")
+
+# Output file
+outputzip="$outputdir"/"$version".jar.zip
+outputjar="$outputdir"/"$version".jar
+
+# Check if the file already exists. If it's already there then we need to remove it
+if [ -s "$outputjar" ]; then
+  echo -en "[\033[31mWarning\033[0m] The file $outputjar already exists. "
+	read -p "Overwrite it? (y/n): " -n 1 -r
+  echo
+
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # If Y or y then remove the file
+    rm "$outputjar"
+  else
+    # They didn't say yes so just gracefully exit
+    exit 0
+  fi
+fi
+
+if [ ! -d "$mkcdir" ]; then
+  echo -e "[\033[33mWarning\033[0m] Core directory does't exist. Creating $mkcdir"
+  mkdir -p "$mkcdir"
+fi
+
+if [ ! -s "$serverzip" ]; then
+  echo -e "[\033[33mWarning\033[0m] No minecraft server jar is downloaded. Downloading..."
+  curl "$serverurl" > "$serverzip"
+fi
+
+# Set up a temporary directory
+tmpfilename=`mktemp -d -p "$mkcdir"`
+echo -e "[\033[32mInfo\033[0m] Creating temp directory: $tmpfilename"
+mkdir "$tmpfilename/out"
+# Change to this temp dir
+cd "$tmpfilename"
+
+regex="^https?://"
+if [[ $1 =~ $regex ]]; then
+  # Now we think this is a URL so let's download it
+  echo -e "[\033[32mInfo\033[0m] Downloading"
+  curl "$1" > "$filename"
+  # The path to the 'zip' is right here
+  carpetzip=$(readlink -f "$filename")
+else
+  # Here we just know it's a path to the file so let's
+  # just work with it
+  carpetzip=$(readlink -f "$1")
+fi
+
+cd out
+
+# Unzip server
+echo -e "[\033[32mInfo\033[0m] Unzipping server zip inside $tmpfilename/out"
+unzip -qo "$serverzip"
+
+# Unpack over the top
+echo -e "[\033[32mInfo\033[0m] Unpacking $version over unzipped server files"
+if [ "$mode" == "zip" ]; then
+  unzip -qo "$carpetzip"
+elif [ "$mode" == "rar" ]; then
+  unrar -f "$carpetzip" . > /dev/null
+fi
+
+# Make initial zip
+echo -e "[\033[32mInfo\033[0m] Creating server zip: $outputzip"
+zip -qr "$outputzip" .
+
+# Changing name
+echo -e "[\033[32mInfo\033[0m] Renaming zip to jar: $outputjar"
+mv "$outputzip" "$outputjar"
+
+# Clean up temp dir
+echo -e "[\033[32mInfo\033[0m] Removing temp directory: $tmpfilename"
+rm -rf "$tmpfilename"
