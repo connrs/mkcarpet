@@ -20,6 +20,10 @@ mkcarpet carpetpathurl outputdir
 **carpetpathurl**: This is the HTTP(S) URL to a Carpet release or a local file path to a pre-downloaded .zip or .rar file
 **outputdir**: This is the directory you'd like the final Carpet release to be moved to.
 
+## Example of usage:
+
+    mkcarpet https://example.com/Carpet_v12_34_56.rar /path/to/server
+
 ## Installation
 
 * Download mkcarpet to your machine.
