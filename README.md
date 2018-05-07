@@ -1,7 +1,6 @@
 # mkcarpet
 
-My idea was to make a bash script that takes a URL to a Carpet server release from Scicraft's mods channel and to add it as
-the first parameter when you call mkcarpet. It will then:
+My idea was to make a bash script that takes a URL to a Carpet server release from Scicraft's mods channel and to be able to pass it as a parameter to a bash script. That script will then:
 
 * Check if you already have a cached copy of 1.12 server (if you don't then it will download it to ~/.mkcarpet)
 * Check if it can unzip/unrar the path that you've provided
