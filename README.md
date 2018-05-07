@@ -24,8 +24,8 @@ mkcarpet carpetpathurl outputdir
 
 * Download mkcarpet to your machine.
 * Make it executable: `chmod +x mkcarpet`
-* Use it (if mkcarpet isn't in your executable path): /full/path/to/mkcarpet https://example.com/Carpet_v42_42_42.zip .
-* Use if (if you moved mkcarpet to /usr/local/bin or /usr/bin or in your path): mkcarpet https://example.com/Carpet_v42_42_42.rar
+* Use it (if mkcarpet isn't in your executable path): /full/path/to/mkcarpet `https://example.com/Carpet_v42_42_42.zip .`
+* Use if (if you moved mkcarpet to /usr/local/bin or /usr/bin or in your path): `mkcarpet https://example.com/Carpet_v42_42_42.rar`
 
 ## Caveats/Warnings
 
