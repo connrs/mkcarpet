@@ -21,6 +21,13 @@ mkcarpet carpetpathurl outputdir
 **carpetpathurl**: This is the HTTP(S) URL to a Carpet release or a local file path to a pre-downloaded .zip or .rar file
 **outputdir**: This is the directory you'd like the final Carpet release to be moved to.
 
+## Installation
+
+* Download mkcarpet to your machine.
+* Make it executable: `chmod +x mkcarpet`
+* Use it (if mkcarpet isn't in your executable path): /full/path/to/mkcarpet https://example.com/Carpet_v42_42_42.zip .
+* Use if (if you moved mkcarpet to /usr/local/bin or /usr/bin or in your path): mkcarpet https://example.com/Carpet_v42_42_42.rar
+
 ## Caveats/Warnings
 
 I've set it to exit immediately on any unexpected errors and I've set it to output useful debugging info when it's running. If
