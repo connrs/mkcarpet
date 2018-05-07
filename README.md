@@ -46,9 +46,9 @@ binaries installed:
 * `zip`
 
 If the carpet release is a .rar file then you may need to check that you have an `unrar` binary installed. On a Debian/Ubuntu
-based system this may need you to run `sudo apt-get install unrar-free` in a terminal. On Red Hat/Fedora based systems you may
+based system this may need you to run `sudo apt-get install unrar` in a terminal. On Red Hat/Fedora based systems you may
 need to have the EPEL yum repo activated and I suspect that `sudo yum install unrar` will work for you. On a mac you will likely
-need to install [homebrew](https://brew.sh/).
+need to install [homebrew](https://brew.sh/) and run `brew install unrar`.
 
 ## Fixes
 

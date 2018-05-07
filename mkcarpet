@@ -133,7 +133,7 @@ echo -e "[\033[32mInfo\033[0m] Unpacking $version over unzipped server files"
 if [ "$mode" == "zip" ]; then
   unzip -qo "$carpetzip"
 elif [ "$mode" == "rar" ]; then
-  unrar -f "$carpetzip" . > /dev/null
+  unrar x -o+ "$carpetzip" ./ > /dev/null
 fi
 
 # Make initial zip
