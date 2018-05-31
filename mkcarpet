@@ -106,11 +106,11 @@ fi
 tmpfilename=`mktemp -d -p "$mkcdir"`
 echo -e "[\033[32mInfo\033[0m] Creating temp directory: $tmpfilename"
 mkdir "$tmpfilename/out"
-# Change to this temp dir
-cd "$tmpfilename"
 
 regex="^https?://"
 if [[ $1 =~ $regex ]]; then
+  # Change to this temp dir
+  cd "$tmpfilename"
   # Now we think this is a URL so let's download it
   echo -e "[\033[32mInfo\033[0m] Downloading"
   curl "$1" > "$filename"
@@ -120,6 +120,8 @@ else
   # Here we just know it's a path to the file so let's
   # just work with it
   carpetzip=$(readlink -f "$1")
+  # Change to this temp dir
+  cd "$tmpfilename"
 fi
 
 cd out
